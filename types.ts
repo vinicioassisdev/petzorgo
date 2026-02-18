@@ -44,6 +44,7 @@ export interface Task {
   frequency: Frequency;
   frequencyDays: number;
   nextDate: string;
+  time?: string; // HH:MM format, optional
   lastCompleted?: string;
   color: string;
   completed: boolean;

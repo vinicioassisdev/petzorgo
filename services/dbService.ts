@@ -31,6 +31,7 @@ const mapTask = (dbTask: any): Task => ({
     frequency: dbTask.frequency,
     frequencyDays: dbTask.frequency_days,
     nextDate: dbTask.next_date,
+    time: dbTask.time || undefined,
     lastCompleted: dbTask.last_completed,
     color: dbTask.color,
     completed: dbTask.completed
@@ -141,6 +142,7 @@ export const taskService = {
                 frequency: task.frequency,
                 frequency_days: task.frequencyDays,
                 next_date: task.nextDate,
+                time: task.time || null,
                 color: task.color,
                 completed: task.completed
             }])

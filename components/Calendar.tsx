@@ -87,12 +87,12 @@ const Calendar: React.FC<CalendarProps> = ({ pets, tasks, events }) => {
                 key={day}
                 onClick={() => hasItems ? setSelectedDay(isSelected ? null : dateStr) : null}
                 className={`min-h-[52px] p-1 rounded-xl flex flex-col items-center border transition-all cursor-default ${isSelected
-                    ? 'bg-purple-100 border-purple-400 ring-2 ring-purple-300'
-                    : isToday
-                      ? 'bg-purple-600 text-white border-purple-600 shadow-md ring-4 ring-purple-100'
-                      : hasItems
-                        ? 'bg-gray-50 border-gray-200 cursor-pointer hover:border-purple-300'
-                        : 'bg-gray-50 border-transparent'
+                  ? 'bg-purple-100 border-purple-400 ring-2 ring-purple-300'
+                  : isToday
+                    ? 'bg-purple-600 text-white border-purple-600 shadow-md ring-4 ring-purple-100'
+                    : hasItems
+                      ? 'bg-gray-50 border-gray-200 cursor-pointer hover:border-purple-300'
+                      : 'bg-gray-50 border-transparent'
                   }`}
               >
                 <span className={`text-xs font-black mb-0.5 ${isToday ? 'text-white' : isSelected ? 'text-purple-700' : 'text-gray-800'}`}>{day}</span>
@@ -135,7 +135,10 @@ const Calendar: React.FC<CalendarProps> = ({ pets, tasks, events }) => {
                     <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: t.color || '#8B5CF6' }} />
                     <div>
                       <p className="font-bold text-gray-800 text-sm">{t.name}</p>
-                      <p className="text-[10px] text-gray-400 font-bold uppercase">{pet?.name || 'Pet'} · {t.frequency}</p>
+                      <p className="text-[10px] text-gray-400 font-bold uppercase">
+                        {pet?.name || 'Pet'} · {t.frequency}
+                        {t.time && <span className="ml-1 text-purple-500 normal-case">· ⏰ {t.time}</span>}
+                      </p>
                     </div>
                   </div>
                 );
@@ -193,7 +196,10 @@ const Calendar: React.FC<CalendarProps> = ({ pets, tasks, events }) => {
                       <p className="font-bold text-gray-800 text-sm truncate">
                         {isTaskItem ? taskItem?.name : `🎉 ${eventItem?.name}`}
                       </p>
-                      <p className="text-[10px] text-gray-400 font-bold uppercase">{pet?.name || 'Pet'}</p>
+                      <p className="text-[10px] text-gray-400 font-bold uppercase">
+                        {pet?.name || 'Pet'}
+                        {isTaskItem && taskItem?.time && <span className="ml-1 text-purple-500 normal-case">· ⏰ {taskItem.time}</span>}
+                      </p>
                     </div>
                   </div>
                 );

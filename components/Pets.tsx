@@ -38,6 +38,7 @@ const Pets: React.FC<PetsProps> = ({
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   });
+  const [taskTime, setTaskTime] = useState('');
   const [customDays, setCustomDays] = useState(3);
 
   const handleAddPet = () => {
@@ -90,11 +91,13 @@ const Pets: React.FC<PetsProps> = ({
       frequency: taskFreq,
       frequencyDays: getFreqDays(),
       nextDate: taskDate,
+      time: taskTime || undefined,
       color: taskColor,
       completed: false
     };
     onAddTask(newTask);
     setTaskName('');
+    setTaskTime('');
     setCustomDays(3);
     setShowTaskModal(false);
   };
@@ -225,7 +228,10 @@ const Pets: React.FC<PetsProps> = ({
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: task.color }}></div>
                       <div>
                         <p className="font-bold text-gray-800 leading-tight">{task.name}</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{getFreqLabel(task.frequency, task.frequencyDays)}</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                          {getFreqLabel(task.frequency, task.frequencyDays)}
+                          {task.time && <span className="ml-1 text-purple-500">· ⏰ {task.time}</span>}
+                        </p>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -401,6 +407,19 @@ const Pets: React.FC<PetsProps> = ({
                   onChange={(e) => setTaskDate(e.target.value)}
                   className="w-full p-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:ring-2 focus:ring-purple-500 font-bold"
                 />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 mb-1 block">⏰ Horário (opcional)</label>
+                <input
+                  type="time"
+                  value={taskTime}
+                  onChange={(e) => setTaskTime(e.target.value)}
+                  className="w-full p-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:ring-2 focus:ring-purple-500 font-bold text-gray-700"
+                />
+                {taskTime && (
+                  <p className="text-[10px] text-purple-600 font-bold mt-1 ml-1">⏰ Lembrete às {taskTime}</p>
+                )}
               </div>
               <div className="flex gap-2 justify-center">
                 {COLORS.taskColors.map(c => (
