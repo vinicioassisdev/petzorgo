@@ -86,5 +86,5 @@ O projeto está pronto para a Vercel. Ao conectar seu GitHub:
 
 <div align="center">
   <p>Desenvolvido com ❤️ para apaixonados por pets.</p>
-  <strong>Master Pro das Galáxias Edition 🌌</strong>
+  <strong>DE Assis Dev 🌌</strong>
 </div>
