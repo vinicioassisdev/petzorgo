@@ -181,6 +181,24 @@ const Settings: React.FC<SettingsProps> = ({ user, pets, tasks, setView }) => {
           </div>
         </div>
 
+        {user.subscriptionStatus !== 'active' && !user.isAdmin && (
+          <div className="bg-purple-600 rounded-3xl p-6 text-white shadow-xl shadow-purple-200 mt-6">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-2xl">💎</span>
+              <h3 className="font-black text-lg uppercase tracking-wider">Seja Pro!</h3>
+            </div>
+            <p className="text-sm font-medium opacity-90 mb-4 leading-relaxed">
+              Desbloqueie todos os recursos, tenha pets ilimitados e garanta a melhor gestão para seus amigos.
+            </p>
+            <button
+              onClick={() => window.location.href = 'https://pay.cakto.com.br/37tqkox_772784'}
+              className="w-full py-3 bg-white text-purple-600 font-black rounded-2xl text-xs uppercase tracking-widest hover:scale-105 transition-transform"
+            >
+              ASSINAR AGORA - R$ 19,90/mês
+            </button>
+          </div>
+        )}
+
         <div className="space-y-4">
           <div className="flex justify-between items-center py-2">
             <span className="text-gray-500 font-bold">Pets Cadastrados</span>
