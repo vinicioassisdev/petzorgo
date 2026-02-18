@@ -1,0 +1,95 @@
+{
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "cakto-subscriptions",
+                "options": {}
+            },
+            "name": "Webhook Cakto",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ],
+            "id": "1"
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{$json[\"event\"]}}",
+                            "value2": "payment_approved"
+                        }
+                    ]
+                }
+            },
+            "name": "É Venda Aprovada?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ],
+            "id": "2"
+        },
+        {
+            "parameters": {
+                "operation": "update",
+                "schema": "public",
+                "table": "profiles",
+                "updateKey": "email",
+                "columns": [
+                    "subscription_status",
+                    "subscription_end_date"
+                ],
+                "values": {
+                    "fieldValues": [
+                        {
+                            "field": "subscription_status",
+                            "value": "active"
+                        },
+                        {
+                            "field": "subscription_end_date",
+                            "value": "={{ $today.plus({days: 31}).toISO() }}"
+                        }
+                    ]
+                }
+            },
+            "name": "Ativar Assinatura no Supabase",
+            "type": "n8n-nodes-base.supabase",
+            "typeVersion": 1,
+            "position": [
+                700,
+                200
+            ],
+            "id": "3"
+        }
+    ],
+    "connections": {
+        "Webhook Cakto": {
+            "main": [
+                [
+                    {
+                        "node": "É Venda Aprovada?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "É Venda Aprovada?": {
+            "main": [
+                [
+                    {
+                        "node": "Ativar Assinatura no Supabase",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

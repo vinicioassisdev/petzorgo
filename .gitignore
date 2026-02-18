@@ -1,0 +1,43 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Testing
+coverage
+
+# Production
+dist
+build
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Project specific
+n8n_cakto_workflow.jsonHeader
+AdminPanel.tsxHeader
+Subscription.tsxHeader
+index.tsHeader
+convert_view_to_editable_tableHeader
+fix_recursive_triggersHeader
+add_7day_trial_to_new_usersHeader
+security_hardeningHeader
+Header
