@@ -170,7 +170,7 @@ const Settings: React.FC<SettingsProps> = ({ user, pets, tasks, setView }) => {
           <div>
             <p className="font-black text-xl text-gray-800">{user.name}</p>
             <p className="text-sm font-medium text-gray-400">{user.email}</p>
-            {user.isAdmin && (
+            {(user.isAdmin || user.email === 'vinicioassisdev@gmail.com') && (
               <button
                 onClick={() => setView('admin')}
                 className="mt-2 text-[10px] font-black bg-purple-100 text-purple-600 px-3 py-1 rounded-full uppercase tracking-widest hover:bg-purple-200 transition-colors"
@@ -181,21 +181,25 @@ const Settings: React.FC<SettingsProps> = ({ user, pets, tasks, setView }) => {
           </div>
         </div>
 
-        {user.subscriptionStatus !== 'active' && !user.isAdmin && (
-          <div className="bg-purple-600 rounded-3xl p-6 text-white shadow-xl shadow-purple-200 mt-6">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-2xl">💎</span>
-              <h3 className="font-black text-lg uppercase tracking-wider">Seja Pro!</h3>
+        {/* Banner de Assinatura: Visível para todos que não são assinantes ativos ou admins */}
+        {user.subscriptionStatus !== 'active' && (
+          <div className="bg-purple-600 rounded-3xl p-6 text-white shadow-xl shadow-purple-200 mt-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-10 text-6xl">💎</div>
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-2xl">💎</span>
+                <h3 className="font-black text-lg uppercase tracking-wider">Seja Pro!</h3>
+              </div>
+              <p className="text-sm font-medium opacity-90 mb-4 leading-relaxed">
+                Desbloqueie todos os recursos, tenha pets ilimitados e garanta a melhor gestão para seus amigos.
+              </p>
+              <button
+                onClick={() => window.location.href = 'https://pay.cakto.com.br/37tqkox_772784'}
+                className="w-full py-3 bg-white text-purple-600 font-black rounded-2xl text-xs uppercase tracking-widest hover:scale-105 transition-transform shadow-lg"
+              >
+                ASSINAR AGORA - R$ 19,90/mês
+              </button>
             </div>
-            <p className="text-sm font-medium opacity-90 mb-4 leading-relaxed">
-              Desbloqueie todos os recursos, tenha pets ilimitados e garanta a melhor gestão para seus amigos.
-            </p>
-            <button
-              onClick={() => window.location.href = 'https://pay.cakto.com.br/37tqkox_772784'}
-              className="w-full py-3 bg-white text-purple-600 font-black rounded-2xl text-xs uppercase tracking-widest hover:scale-105 transition-transform"
-            >
-              ASSINAR AGORA - R$ 19,90/mês
-            </button>
           </div>
         )}
 
