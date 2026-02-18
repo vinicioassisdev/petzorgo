@@ -72,17 +72,20 @@ const App: React.FC = () => {
 
   // 2. Carregar Perfil (SaaS: Admin + Assinatura) quando o usuário logar
   useEffect(() => {
-    if (user && user.id && user.subscriptionStatus === undefined) {
+    if (user && user.id && (user.subscriptionStatus === undefined || user.subscriptionStatus === null)) {
       const loadProfile = async () => {
         try {
-          console.log("Carregando dados de assinatura...");
-          const { data } = await supabase
+          console.log("Carregando dados de assinatura para:", user.email);
+          const { data, error } = await supabase
             .from('profiles')
             .select('is_admin, subscription_status, subscription_end_date')
             .eq('id', user.id)
             .single();
 
+          if (error) throw error;
+
           if (data) {
+            console.log("Perfil carregado:", data);
             setUser(prev => prev ? {
               ...prev,
               isAdmin: data.is_admin,
