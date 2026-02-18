@@ -34,7 +34,10 @@ const Pets: React.FC<PetsProps> = ({
   const [taskName, setTaskName] = useState('');
   const [taskFreq, setTaskFreq] = useState<Frequency>(Frequency.DAILY);
   const [taskColor, setTaskColor] = useState(COLORS.taskColors[0]);
-  const [taskDate, setTaskDate] = useState(new Date().toISOString().split('T')[0]);
+  const [taskDate, setTaskDate] = useState(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  });
 
   const handleAddPet = () => {
     const newPet: Omit<Pet, 'id' | 'createdAt' | 'weightHistory'> = {

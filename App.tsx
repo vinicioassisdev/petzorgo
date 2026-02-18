@@ -200,7 +200,7 @@ const App: React.FC = () => {
 
     const nextDate = new Date();
     nextDate.setDate(nextDate.getDate() + (task.frequencyDays || 1));
-    const nextDateStr = nextDate.toISOString().split('T')[0];
+    const nextDateStr = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`;
 
     try {
       const updated = await taskService.completeTask(id, nextDateStr);

@@ -12,7 +12,10 @@ interface EventsProps {
 const Events: React.FC<EventsProps> = ({ pets, events, onAddEvent, onDeleteEvent }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [eventName, setEventName] = useState('');
-  const [eventDate, setEventDate] = useState('');
+  const [eventDate, setEventDate] = useState(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  });
   const [eventPetId, setEventPetId] = useState(pets[0]?.id || '');
 
   const handleAdd = () => {
@@ -31,7 +34,7 @@ const Events: React.FC<EventsProps> = ({ pets, events, onAddEvent, onDeleteEvent
     <div className="space-y-6">
       <div className="flex items-center justify-between slide-in">
         <h2 className="text-2xl font-black text-gray-800">Eventos 🎉</h2>
-        <button 
+        <button
           onClick={() => setShowAddModal(true)}
           className="px-4 py-2 gradient-bg text-white font-bold rounded-xl shadow-lg"
         >
@@ -59,7 +62,10 @@ const Events: React.FC<EventsProps> = ({ pets, events, onAddEvent, onDeleteEvent
                 </div>
                 <div className="text-right flex flex-col items-end gap-2">
                   <span className="text-xs font-black text-purple-600">
-                    {new Date(event.date).toLocaleDateString('pt-BR')}
+                    {(() => {
+                      const [y, m, d] = event.date.split('-');
+                      return `${d}/${m}/${y}`;
+                    })()}
                   </span>
                   <button onClick={() => onDeleteEvent(event.id)} className="text-red-400 hover:text-red-600 transition-colors">🗑️</button>
                 </div>
@@ -74,20 +80,20 @@ const Events: React.FC<EventsProps> = ({ pets, events, onAddEvent, onDeleteEvent
           <div className="bg-white w-full max-w-sm rounded-[32px] p-8 space-y-4 slide-in shadow-2xl">
             <h2 className="text-2xl font-black text-gray-800">Novo Evento</h2>
             <div className="space-y-4">
-              <input 
-                type="text" 
-                placeholder="Nome do evento" 
+              <input
+                type="text"
+                placeholder="Nome do evento"
                 value={eventName}
                 onChange={(e) => setEventName(e.target.value)}
                 className="w-full p-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:ring-2 focus:ring-purple-500 font-bold"
               />
-              <input 
-                type="date" 
+              <input
+                type="date"
                 value={eventDate}
                 onChange={(e) => setEventDate(e.target.value)}
                 className="w-full p-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:ring-2 focus:ring-purple-500 font-bold"
               />
-              <select 
+              <select
                 value={eventPetId}
                 onChange={(e) => setEventPetId(e.target.value)}
                 className="w-full p-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:ring-2 focus:ring-purple-500 font-bold"

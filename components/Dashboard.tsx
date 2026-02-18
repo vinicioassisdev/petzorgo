@@ -10,11 +10,15 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ pets, tasks, onCompleteTask, setView }) => {
-  const todayStr = new Date().toISOString().split('T')[0];
+  const getTodayStr = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+  const todayStr = getTodayStr();
   const activeTasks = tasks.filter(t => !t.completed);
   const overdueTasks = tasks.filter(t => t.nextDate < todayStr && !t.completed);
   const todayTasks = tasks.filter(t => t.nextDate === todayStr && !t.completed);
-  
+
   const stats = [
     { label: 'Ativas', value: activeTasks.length, icon: '📋', color: 'text-gray-800' },
     { label: 'Atrasadas', value: overdueTasks.length, icon: '⚠️', color: 'text-red-500' },
@@ -58,7 +62,7 @@ const Dashboard: React.FC<DashboardProps> = ({ pets, tasks, onCompleteTask, setV
                       <p className="text-xs text-gray-500 font-medium">{pet?.name || 'Pet'}</p>
                     </div>
                   </div>
-                  <button 
+                  <button
                     onClick={() => onCompleteTask(task.id)}
                     className="px-4 py-1.5 rounded-lg bg-green-500 text-white text-xs font-bold hover:bg-green-600 transition-colors shadow-sm"
                   >
@@ -73,7 +77,7 @@ const Dashboard: React.FC<DashboardProps> = ({ pets, tasks, onCompleteTask, setV
         <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center slide-in">
           <span className="text-5xl block mb-2">🎉</span>
           <p className="text-gray-500 font-bold">Tudo em dia por hoje!</p>
-          <button 
+          <button
             onClick={() => setView('pets')}
             className="mt-4 text-purple-600 text-sm font-bold hover:underline"
           >
