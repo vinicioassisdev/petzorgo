@@ -86,5 +86,5 @@ O projeto está pronto para a Vercel. Ao conectar seu GitHub:
 
 <div align="center">
   <p>Desenvolvido com ❤️ para apaixonados por pets.</p>
-  <strong>DE Assis Dev 🌌</strong>
+  <strong>De Assis Dev 🌌</strong>
 </div>
