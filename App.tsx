@@ -297,10 +297,23 @@ const App: React.FC = () => {
         <History pets={pets} tasks={tasks} />
       )}
       {currentView === 'settings' && (
-        <Settings user={user!} pets={pets} tasks={tasks} setView={setCurrentView} />
+        <Settings
+          user={user!}
+          pets={pets}
+          tasks={tasks}
+          setView={setCurrentView}
+          onUpdateName={(newName) => setUser(prev => prev ? { ...prev, name: newName } : null)}
+        />
       )}
-      {currentView === 'admin' && (
+      {currentView === 'admin' && user?.isAdmin && (
         <AdminPanel />
+      )}
+      {currentView === 'admin' && !user?.isAdmin && (
+        <div className="bg-red-50 p-8 rounded-3xl text-center border border-red-100">
+          <span className="text-4xl mb-4 block">🚫</span>
+          <h3 className="text-red-800 font-black mb-2">Acesso Negado</h3>
+          <p className="text-red-600 text-sm">Apenas administradores podem acessar este painel.</p>
+        </div>
       )}
       {currentView === 'subscription' && (
         <Subscription user={user!} />

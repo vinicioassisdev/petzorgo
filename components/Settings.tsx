@@ -10,9 +10,10 @@ interface SettingsProps {
   pets: Pet[];
   tasks: Task[];
   setView: (v: View) => void;
+  onUpdateName?: (newName: string) => void;
 }
 
-const Settings: React.FC<SettingsProps> = ({ user, pets, tasks, setView }) => {
+const Settings: React.FC<SettingsProps> = ({ user, pets, tasks, setView, onUpdateName }) => {
   const [startDate, setStartDate] = useState(new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedPetId, setSelectedPetId] = useState<string>('all');
@@ -20,6 +21,9 @@ const Settings: React.FC<SettingsProps> = ({ user, pets, tasks, setView }) => {
   const [isCleaning, setIsCleaning] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [newName, setNewName] = useState(user.name || '');
+  const [isUpdatingName, setIsUpdatingName] = useState(false);
+  const [isEditingName, setIsEditingName] = useState(false);
 
   // Check if there is data older than 1 year
   const hasOldData = useMemo(() => {
@@ -118,6 +122,34 @@ const Settings: React.FC<SettingsProps> = ({ user, pets, tasks, setView }) => {
     }
   };
 
+  const handleChangeName = async () => {
+    if (!newName.trim() || newName.trim().length < 2) {
+      alert("O nome deve ter pelo menos 2 caracteres.");
+      return;
+    }
+    setIsUpdatingName(true);
+    try {
+      const { error: authError } = await supabase.auth.updateUser({
+        data: { full_name: newName.trim() }
+      });
+      if (authError) throw authError;
+
+      const { error: dbError } = await supabase
+        .from('profiles')
+        .update({ full_name: newName.trim() })
+        .eq('id', user.id);
+      if (dbError) throw dbError;
+
+      if (onUpdateName) onUpdateName(newName.trim());
+      setIsEditingName(false);
+      alert('Nome atualizado com sucesso! 🎉');
+    } catch (err: any) {
+      alert('Erro ao atualizar nome: ' + err.message);
+    } finally {
+      setIsUpdatingName(false);
+    }
+  };
+
   const handleChangePassword = async () => {
     if (!newPassword || newPassword.length < 6) {
       alert("A nova senha deve ter pelo menos 6 caracteres.");
@@ -164,13 +196,48 @@ const Settings: React.FC<SettingsProps> = ({ user, pets, tasks, setView }) => {
 
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 slide-in space-y-4">
         <div className="flex items-center gap-4 border-b border-gray-50 pb-4">
-          <div className="w-16 h-16 rounded-full gradient-bg flex items-center justify-center text-white text-2xl font-black">
-            {user.name.charAt(0)}
+          <div className="w-16 h-16 rounded-full gradient-bg flex items-center justify-center text-white text-2xl font-black flex-shrink-0">
+            {(newName || user.name || '?').charAt(0).toUpperCase()}
           </div>
-          <div>
-            <p className="font-black text-xl text-gray-800">{user.name}</p>
-            <p className="text-sm font-medium text-gray-400">{user.email}</p>
-            {(user.isAdmin || user.email === 'vinicioassisdev@gmail.com') && (
+          <div className="flex-1 min-w-0">
+            {isEditingName ? (
+              <div className="flex gap-2 items-center">
+                <input
+                  type="text"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  className="flex-1 p-2 rounded-xl border-2 border-purple-300 outline-none font-bold text-gray-800 text-sm focus:border-purple-500"
+                  placeholder="Seu nome"
+                  autoFocus
+                />
+                <button
+                  onClick={handleChangeName}
+                  disabled={isUpdatingName}
+                  className="px-3 py-2 bg-purple-600 text-white font-black rounded-xl text-xs disabled:opacity-50"
+                >
+                  {isUpdatingName ? '...' : '✓'}
+                </button>
+                <button
+                  onClick={() => { setIsEditingName(false); setNewName(user.name || ''); }}
+                  className="px-3 py-2 bg-gray-100 text-gray-500 font-black rounded-xl text-xs"
+                >
+                  ✕
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <p className="font-black text-xl text-gray-800 truncate">{user.name}</p>
+                <button
+                  onClick={() => setIsEditingName(true)}
+                  className="text-gray-400 hover:text-purple-600 transition-colors flex-shrink-0"
+                  title="Editar nome"
+                >
+                  ✏️
+                </button>
+              </div>
+            )}
+            <p className="text-sm font-medium text-gray-400 truncate">{user.email}</p>
+            {user.isAdmin && (
               <button
                 onClick={() => setView('admin')}
                 className="mt-2 text-[10px] font-black bg-purple-100 text-purple-600 px-3 py-1 rounded-full uppercase tracking-widest hover:bg-purple-200 transition-colors"
@@ -181,8 +248,8 @@ const Settings: React.FC<SettingsProps> = ({ user, pets, tasks, setView }) => {
           </div>
         </div>
 
-        {/* Banner de Assinatura: Visível para todos que não são assinantes ativos ou admins */}
-        {user.subscriptionStatus !== 'active' && (
+        {/* Banner de Assinatura: Visível apenas para não-admins e não-assinantes */}
+        {!user.isAdmin && user.subscriptionStatus !== 'active' && (
           <div className="bg-purple-600 rounded-3xl p-6 text-white shadow-xl shadow-purple-200 mt-6 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-10 text-6xl">💎</div>
             <div className="relative z-10">
