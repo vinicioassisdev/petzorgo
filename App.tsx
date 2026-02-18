@@ -201,8 +201,10 @@ const App: React.FC = () => {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
 
+    // Calcular próxima data com base na frequência (em dias locais)
+    const freqDays = task.frequencyDays || 1;
     const nextDate = new Date();
-    nextDate.setDate(nextDate.getDate() + (task.frequencyDays || 1));
+    nextDate.setDate(nextDate.getDate() + freqDays);
     const nextDateStr = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`;
 
     try {
