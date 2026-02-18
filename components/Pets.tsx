@@ -38,6 +38,7 @@ const Pets: React.FC<PetsProps> = ({
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   });
+  const [customDays, setCustomDays] = useState(3);
 
   const handleAddPet = () => {
     const newPet: Omit<Pet, 'id' | 'createdAt' | 'weightHistory'> = {
@@ -63,6 +64,23 @@ const Pets: React.FC<PetsProps> = ({
     setTaskColor(template.color);
   };
 
+  const getFreqDays = () => {
+    if (taskFreq === Frequency.DAILY) return 1;
+    if (taskFreq === Frequency.WEEKLY) return 7;
+    if (taskFreq === Frequency.BIWEEKLY) return 14;
+    if (taskFreq === Frequency.MONTHLY) return 30;
+    return customDays; // CUSTOM
+  };
+
+  const getFreqLabel = (freq: string, freqDays?: number) => {
+    if (freq === 'daily') return 'Diário';
+    if (freq === 'weekly') return 'Semanal';
+    if (freq === 'biweekly') return 'Quinzenal';
+    if (freq === 'monthly') return 'Mensal';
+    if (freq === 'custom') return freqDays ? `A cada ${freqDays} dias` : 'Personalizado';
+    return freq;
+  };
+
   const handleAddTask = () => {
     if (!selectedPet) return;
     const newTask: Task = {
@@ -70,13 +88,14 @@ const Pets: React.FC<PetsProps> = ({
       petId: selectedPet.id,
       name: taskName,
       frequency: taskFreq,
-      frequencyDays: taskFreq === Frequency.DAILY ? 1 : taskFreq === Frequency.WEEKLY ? 7 : 30,
+      frequencyDays: getFreqDays(),
       nextDate: taskDate,
       color: taskColor,
       completed: false
     };
     onAddTask(newTask);
     setTaskName('');
+    setCustomDays(3);
     setShowTaskModal(false);
   };
 
@@ -206,7 +225,7 @@ const Pets: React.FC<PetsProps> = ({
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: task.color }}></div>
                       <div>
                         <p className="font-bold text-gray-800 leading-tight">{task.name}</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{task.frequency}</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{getFreqLabel(task.frequency, task.frequencyDays)}</p>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -338,10 +357,42 @@ const Pets: React.FC<PetsProps> = ({
                 onChange={(e) => setTaskFreq(e.target.value as Frequency)}
                 className="w-full p-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:ring-2 focus:ring-purple-500 font-bold"
               >
-                <option value={Frequency.DAILY}>Diário</option>
-                <option value={Frequency.WEEKLY}>Semanal</option>
-                <option value={Frequency.MONTHLY}>Mensal</option>
+                <option value={Frequency.DAILY}>Diário (todo dia)</option>
+                <option value={Frequency.WEEKLY}>Semanal (a cada 7 dias)</option>
+                <option value={Frequency.BIWEEKLY}>Quinzenal (a cada 14 dias)</option>
+                <option value={Frequency.MONTHLY}>Mensal (a cada 30 dias)</option>
+                <option value={Frequency.CUSTOM}>Personalizado (escolher dias)</option>
               </select>
+
+              {taskFreq === Frequency.CUSTOM && (
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 mb-1 block">Repetir a cada quantos dias?</label>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setCustomDays(d => Math.max(1, d - 1))}
+                      className="w-10 h-10 rounded-xl bg-gray-100 text-gray-700 font-black text-lg hover:bg-purple-100 hover:text-purple-700 transition-colors flex-shrink-0"
+                    >−</button>
+                    <div className="flex-1 text-center">
+                      <span className="text-3xl font-black text-purple-600">{customDays}</span>
+                      <span className="text-sm font-bold text-gray-400 ml-1">dias</span>
+                    </div>
+                    <button
+                      onClick={() => setCustomDays(d => Math.min(365, d + 1))}
+                      className="w-10 h-10 rounded-xl bg-gray-100 text-gray-700 font-black text-lg hover:bg-purple-100 hover:text-purple-700 transition-colors flex-shrink-0"
+                    >+</button>
+                  </div>
+                  <input
+                    type="range"
+                    min={1}
+                    max={90}
+                    value={customDays}
+                    onChange={(e) => setCustomDays(Number(e.target.value))}
+                    className="w-full mt-2 accent-purple-600"
+                  />
+                  <p className="text-center text-[10px] text-gray-400 font-bold mt-1">A rotina vai se repetir a cada {customDays} {customDays === 1 ? 'dia' : 'dias'}</p>
+                </div>
+              )}
+
               <div>
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 mb-1 block">Data de Início</label>
                 <input
